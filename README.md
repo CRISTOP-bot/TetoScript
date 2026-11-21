@@ -1,48 +1,49 @@
 # TetoScript
 
-**TetoScript** es un lenguaje experimental inspirado en Kasane Teto: una propuesta de lenguaje propio con una sintaxis expresiva y familiar para quienes usan TypeScript.
+**Un lenguaje propio inspirado en Kasane Teto**, con una sintaxis distintiva y familiar para quienes conocen TypeScript. El repositorio contiene un intérprete experimental escrito en Python; no es TypeScript, no es compatible con su ecosistema y aún no es un reemplazo listo para producción.
 
-> Estado: prototipo inicial. Todavía no sustituye a TypeScript ni busca compatibilidad con su ecosistema. El objetivo de este repositorio es diseñar el lenguaje y construirlo de forma incremental.
-
-## Sintaxis que estamos explorando
-
-La idea inicial compartida para el lenguaje fue:
+## Ejemplo ejecutable
 
 ```teto
- tetolog (teto%teto25) Teto else:tetolog (teto%"nose")
+teto nombre: string = "Teto"
+teto edad: number = 25
+
+teto fn saludo(persona: string) -> string {
+    return "Hola, " + persona + "!"
+}
+
+Teto (edad % 2 == 1) {
+    tetolog(saludo(nombre))
+} else {
+    tetolog("nose")
+}
 ```
 
-La conservamos como **propuesta de diseño**, pero su gramática y el significado de `%` y `Teto` todavía necesitan definirse; esta línea aún no se ejecuta en el prototipo. La primera sintaxis ejecutable es deliberadamente pequeña:
+La palabra `Teto` identifica el condicional; `teto` introduce variables y funciones; `tetolog` es la salida; `nose` representa ausencia de valor. El operador `%` es módulo numérico. Para imprimir una frase que contenga `%`, escríbela como texto entre comillas, por ejemplo `tetolog("Teto%Teto25")`.
 
-```teto
-# examples/hello.teto
-teto nombre = "Teto"
-Teto nombre == "Teto":
-    tetolog ("¡Hola, " + nombre + "!")
-else:
-    tetolog ("Hola, mundo")
-```
+## Ejecutar
 
-En esta primera versión, `teto` declara una variable, `Teto condición:` inicia una condición, `else:` marca la alternativa y `tetolog (...)` imprime un valor.
-
-## Probarlo
-
-Requiere Python 3.10 o posterior. Desde la raíz del repositorio:
+Requiere Python 3.10 o posterior, sin dependencias externas. Desde la raíz:
 
 ```sh
-python -m tetoscript examples/hello.teto
+PYTHONPATH=src python -m tetoscript examples/hello.teto
 ```
 
-Ejecutar las pruebas:
+Instalación editable y comando `teto`:
+
+```sh
+python -m pip install -e .
+teto examples/hello.teto
+```
+
+Pruebas:
 
 ```sh
 python -m unittest discover -s tests -v
 ```
 
-## Visión
+## Estado del proyecto
 
-Queremos explorar un lenguaje con tipos, funciones, módulos y herramientas de desarrollo modernas, tomando como referencia la ergonomía de TypeScript sin copiar su identidad. El diseño irá evolucionando con ejemplos, una especificación y pruebas ejecutables.
+La versión `0.2.0` ya ejecuta variables, anotaciones básicas comprobadas en runtime, funciones, retorno, expresiones aritméticas y lógicas, condicionales, comentarios y salida. Todavía faltan análisis estático real, bucles, módulos, colecciones, herramientas de desarrollo y un compilador. No se declara reemplazo de TypeScript ni lenguaje estable.
 
-## Licencia
-
-Aún no se ha elegido una licencia. No reutilices ni redistribuyas el código hasta que se añada una licencia explícita.
+Consulta [docs/syntax.md](docs/syntax.md) para la sintaxis implementada. La licencia sigue pendiente: no se asigna una licencia sin decidirla explícitamente.

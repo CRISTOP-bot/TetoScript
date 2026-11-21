@@ -4,9 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tetoscript-prototype"
-version = "0.1.0"
-description = "Prototipo experimental del lenguaje TetoScript"
+version = "0.2.0"
+description = "Intérprete experimental del lenguaje TetoScript"
 requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+teto = "tetoscript.__main__:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

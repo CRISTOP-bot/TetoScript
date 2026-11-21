@@ -1,6 +1,13 @@
-# Ejemplo inicial ejecutable de TetoScript
-teto nombre = "Teto"
-Teto nombre == "Teto":
-    tetolog ("¡Hola, " + nombre + "!")
-else:
-    tetolog ("Hola, mundo")
+# Programa TetoScript con variables, anotaciones, función, módulo y condicionales.
+teto nombre: string = "Teto"
+teto edad: number = 25
+
+teto fn saludo(persona: string) -> string {
+    return "Hola, " + persona + "!"
+}
+
+Teto (edad % 2 == 1) {
+    tetolog(saludo(nombre))
+} else {
+    tetolog("nose")
+}
