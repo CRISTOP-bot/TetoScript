@@ -1,0 +1,6 @@
+# Ejemplo inicial ejecutable de TetoScript
+teto nombre = "Teto"
+Teto nombre == "Teto":
+    tetolog ("¡Hola, " + nombre + "!")
+else:
+    tetolog ("Hola, mundo")
