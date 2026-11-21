@@ -2,7 +2,7 @@
 
 TetoScript está en fase de diseño y prototipo. La prioridad es convertir el lenguaje en algo consistente y comprobable, no prometer compatibilidad con TypeScript antes de construirla.
 
-## Hecho en 0.4.0
+## Hecho en 0.5.0
 
 - Lexer propio y parser con precedencia de operadores.
 - Intérprete sin `eval` ni ejecución de código Python fuente.
@@ -12,11 +12,12 @@ TetoScript está en fase de diseño y prototipo. La prioridad es convertir el le
 - `teto check` valida sintaxis, nombres y tipos básicos sin ejecutar el archivo.
 - Logo oficial proporcionado por el creador, integrado al README.
 - Verificador estático inicial para nombres, tipos de variables, argumentos y tipos de retorno.
+- Asignaciones con control de tipos y bucles `while` limitados a 100 000 iteraciones por ejecución del bucle.
 
 ## Próximas etapas
 
 1. Especificar semántica y mensajes de error; decidir estilo de nombres, mutabilidad y política de tipos.
-2. Añadir asignación y estructuras de datos con pruebas de compatibilidad.
+2. Añadir estructuras de datos con pruebas de compatibilidad.
 3. Añadir bucles y módulos/importaciones con manejo seguro de rutas.
 4. Completar análisis de flujo, inferencia y cobertura de rutas de retorno; el verificador básico y `teto check` ya existen.
 5. Formateador, linter y documentación de API.

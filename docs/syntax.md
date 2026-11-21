@@ -57,3 +57,25 @@ teto check programa.teto
 ```
 
 El comando tokeniza, parsea y comprueba estáticamente nombres definidos, tipos anotados, tipos de los argumentos, tipos de retorno y condiciones booleanas. No ejecuta expresiones. El analizador aún no verifica que todas las rutas de una función devuelvan un valor ni analiza flujo complejo.
+
+
+## Reasignación
+
+Las variables declaradas con `teto` son mutables. Una reasignación actualiza una variable ya existente; no crea nombres nuevos. El tipo inferido o anotado se conserva y `teto check` informa si intentas asignarle otro tipo.
+
+```teto
+teto contador: number = 0
+contador = contador + 1
+```
+
+## Bucles
+
+```teto
+teto contador: number = 0
+while (contador < 3) {
+    tetolog(contador)
+    contador = contador + 1
+}
+```
+
+La condición debe ser booleana según el analizador estático. El intérprete detiene cada bucle después de 100 000 iteraciones como protección frente a ciclos accidentales; `break` y `continue` todavía no existen.

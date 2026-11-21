@@ -61,6 +61,14 @@ class Parser:
             if self.keyword("else"):
                 self.advance(); no=self.block()
             return Stmt("if", None, (condition, tuple(yes), tuple(no)), start.line)
+        if self.keyword("while"):
+            start=self.advance()
+            self.expect("("); condition=self.expression(); self.expect(")")
+            return Stmt("while", None, (condition, tuple(self.block())), start.line)
+        if self.current.kind == "IDENT" and self.i + 1 < len(self.tokens) and self.tokens[self.i + 1].kind == "=":
+            name=self.advance(); self.advance()
+            value=self.expression(); self.accept(";")
+            return Stmt("assign", name.value, (value,), name.line)
         if self.keyword("return"):
             start=self.advance()
             value=None if self.current.kind in (";", "}", "EOF") else self.expression()

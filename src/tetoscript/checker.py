@@ -123,6 +123,13 @@ class Checker:
                 expected = self.validate_type(annotation, stmt.line)
                 if expected != "unknown": self.expect(actual, expected, stmt.line, f"inicialización de {name}")
                 self.define(str(name), expected if expected != "unknown" else actual, stmt.line)
+            elif stmt.kind == "assign":
+                name = str(stmt.value)
+                existing = self.lookup(name, stmt.line)
+                if isinstance(existing, FunctionType):
+                    self.error(stmt.line, f"no se puede reasignar la función: {name}")
+                actual = self.expression(stmt.children[0])
+                self.expect(actual, existing, stmt.line, f"reasignación de {name}")
             elif stmt.kind == "function":
                 name, parameters, declared_result = stmt.value
                 parameter_types = tuple(self.validate_type(t, stmt.line) for _, t in parameters)
@@ -144,6 +151,12 @@ class Checker:
                     self.scopes.append({})
                     self.statements(branch)
                     self.scopes.pop()
+            elif stmt.kind == "while":
+                condition, body = stmt.children
+                self.expect(self.expression(condition), "boolean", condition.line, "la condición de while")
+                self.scopes.append({})
+                self.statements(body)
+                self.scopes.pop()
             elif stmt.kind == "return":
                 if self.return_type is None:
                     self.error(stmt.line, "return solo se permite dentro de una función")

@@ -79,5 +79,30 @@ Teto (age % 2 == 1) { tetolog(greet(name)) } else { tetolog("nose") }'''
     def test_static_checker_rejects_non_boolean_condition(self):
         with self.assertRaisesRegex(TetoCheckError,"condición de Teto: se esperaba boolean"):
             check('Teto (5) { tetolog("yes") }')
+    def test_assignment_and_while_loop(self):
+        source='''teto i: number = 0
+teto total: number = 0
+while (i < 5) {
+    total = total + i
+    i = i + 1
+}
+tetolog(total)'''
+        check(source)
+        self.assertEqual(run(source),["10"])
+    def test_static_checker_rejects_bad_assignment_type(self):
+        with self.assertRaisesRegex(TetoCheckError,"reasignación de age: se esperaba number"):
+            check('teto age: number = 25 age = "old"')
+    def test_static_checker_rejects_assignment_to_unknown_name(self):
+        with self.assertRaisesRegex(TetoCheckError,"nombre no definido: ghost"):
+            check('ghost = 5')
+    def test_runtime_rejects_bad_assignment_type(self):
+        with self.assertRaisesRegex(TetoRuntimeError,"se esperaba number"):
+            run('teto age: number = 25 age = "old"')
+    def test_runtime_stops_non_terminating_loop(self):
+        with self.assertRaisesRegex(TetoRuntimeError,"100000 iteraciones"):
+            run('while (true) {}')
+    def test_checker_rejects_reassigning_function(self):
+        with self.assertRaisesRegex(TetoCheckError,"no se puede reasignar la función"):
+            check('teto fn f() -> number { return 1 } f = 2')
 
 if __name__=="__main__": unittest.main()

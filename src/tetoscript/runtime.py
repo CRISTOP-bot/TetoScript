@@ -15,6 +15,29 @@ class Environment:
     def define(self,name: str,value: Any):
         if name in self.values: raise TetoRuntimeError(f"variable ya declarada: {name}")
         self.values[name]=value
+    def assign(self,name: str,value: Any):
+        if name in self.values:
+            self.values[name]=value; return
+        if self.parent:
+            self.parent.assign(name,value); return
+        raise TetoRuntimeError(f"variable no definida: {name}")
+    def contains(self,name: str) -> bool:
+        return name in self.values or (self.parent.contains(name) if self.parent else False)
+    def declared_type(self,name: str):
+        if name in self.values: return getattr(self,"types",{}).get(name)
+        if self.parent: return self.parent.declared_type(name)
+        return None
+    @staticmethod
+    def runtime_type(value: Any) -> str:
+        if value is None: return "nose"
+        if isinstance(value,bool): return "boolean"
+        if isinstance(value,(int,float)): return "number"
+        if isinstance(value,str): return "string"
+        if isinstance(value,Function): return "function"
+        return "unknown"
+    def set_type(self,name: str,type_name: str | None):
+        if not hasattr(self,"types"): self.types={}
+        self.types[name]=type_name
 
 @dataclass
 class Function:
@@ -87,13 +110,24 @@ class Interpreter:
     def execute(self,statements: tuple | list,env: Environment):
         for stmt in statements:
             if stmt.kind=="let":
-                (name,annotation)=stmt.value; value=self.evaluate(stmt.children[0],env); check_type(value,annotation,stmt.line); env.define(name,value)
+                (name,annotation)=stmt.value; value=self.evaluate(stmt.children[0],env); check_type(value,annotation,stmt.line); env.define(name,value); env.set_type(name,annotation or Environment.runtime_type(value))
+            elif stmt.kind=="assign":
+                name=str(stmt.value); value=self.evaluate(stmt.children[0],env)
+                if not env.contains(name): raise TetoRuntimeError(f"línea {stmt.line}: variable no definida: {name}")
+                check_type(value,env.declared_type(name),stmt.line); env.assign(name,value)
             elif stmt.kind=="function":
-                name,params,return_type=stmt.value; env.define(name,Function(name,params,return_type,stmt.children,env))
+                name,params,return_type=stmt.value; env.define(name,Function(name,params,return_type,stmt.children,env)); env.set_type(name,"function")
             elif stmt.kind=="if":
                 cond,yes,no=stmt.children; branch=yes if self.truthy(self.evaluate(cond,env)) else no
                 signal=self.execute(branch,Environment(env))
                 if signal: return signal
+            elif stmt.kind=="while":
+                condition,body=stmt.children; iterations=0
+                while self.truthy(self.evaluate(condition,env)):
+                    iterations += 1
+                    if iterations > 100000: raise TetoRuntimeError(f"línea {stmt.line}: se superó el límite de 100000 iteraciones")
+                    signal=self.execute(body,Environment(env))
+                    if signal: return signal
             elif stmt.kind=="return":
                 value=self.evaluate(stmt.children[0],env) if stmt.children else None
                 return ReturnSignal(value)
@@ -102,7 +136,7 @@ class Interpreter:
     def call(self,fn: Function,args: list[Any],line: int):
         if len(args)!=len(fn.params): raise TetoRuntimeError(f"línea {line}: {fn.name} espera {len(fn.params)} argumentos, recibió {len(args)}")
         scope=Environment(fn.closure)
-        for (name,type_name),value in zip(fn.params,args): check_type(value,type_name,line); scope.define(name,value)
+        for (name,type_name),value in zip(fn.params,args): check_type(value,type_name,line); scope.define(name,value); scope.set_type(name,type_name or Environment.runtime_type(value))
         signal=self.execute(fn.body,scope)
         value=signal.value if signal else None
         check_type(value,fn.return_type,line)
