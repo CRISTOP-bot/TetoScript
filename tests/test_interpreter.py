@@ -2,6 +2,7 @@ import unittest
 from tetoscript.lexer import TetoSyntaxError
 from tetoscript.runtime import TetoRuntimeError, run
 from tetoscript.__main__ import main
+from tetoscript.checker import TetoCheckError, check
 from contextlib import redirect_stdout, redirect_stderr
 from io import StringIO
 from pathlib import Path
@@ -41,7 +42,7 @@ Teto (age % 2 == 1) { tetolog(greet(name)) } else { tetolog("nose") }'''
             path.write_text('tetolog("this must not print")',encoding="utf-8")
             out=StringIO()
             with redirect_stdout(out): self.assertEqual(main(["check",str(path)]),0)
-            self.assertIn("Sintaxis válida",out.getvalue())
+            self.assertIn("Análisis correcto",out.getvalue())
             self.assertNotIn("this must not print",out.getvalue())
     def test_check_command_rejects_invalid_syntax(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -50,5 +51,33 @@ Teto (age % 2 == 1) { tetolog(greet(name)) } else { tetolog("nose") }'''
             err=StringIO()
             with redirect_stderr(err): self.assertEqual(main(["check",str(path)]),1)
             self.assertIn("TetoScript:",err.getvalue())
+    def test_static_checker_rejects_undefined_name(self):
+        with self.assertRaisesRegex(TetoCheckError,"nombre no definido: phantom"):
+            check('tetolog(phantom)')
+    def test_static_checker_rejects_wrong_variable_type(self):
+        with self.assertRaisesRegex(TetoCheckError,"se esperaba number, se obtuvo string"):
+            check('teto age: number = "25"')
+    def test_static_checker_rejects_wrong_function_argument(self):
+        source='teto fn greet(name: string) -> string { return name } tetolog(greet(25))'
+        with self.assertRaisesRegex(TetoCheckError,"argumento 1 de greet: se esperaba string"):
+            check(source)
+    def test_static_checker_accepts_complete_example(self):
+        check(Path("examples/hello.teto").read_text(encoding="utf-8"))
+    def test_static_checker_rejects_return_outside_function(self):
+        with self.assertRaisesRegex(TetoCheckError,"return solo se permite"):
+            check('return 5')
+    def test_check_command_finds_semantic_error_without_running(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/"bad.teto"
+            path.write_text('tetolog(notDefined)',encoding="utf-8")
+            err=StringIO()
+            with redirect_stderr(err): self.assertEqual(main(["check",str(path)]),1)
+            self.assertIn("nombre no definido: notDefined",err.getvalue())
+    def test_static_checker_rejects_wrong_function_return(self):
+        with self.assertRaisesRegex(TetoCheckError,"valor de retorno: se esperaba number"):
+            check('teto fn count() -> number { return "five" }')
+    def test_static_checker_rejects_non_boolean_condition(self):
+        with self.assertRaisesRegex(TetoCheckError,"condición de Teto: se esperaba boolean"):
+            check('Teto (5) { tetolog("yes") }')
 
 if __name__=="__main__": unittest.main()

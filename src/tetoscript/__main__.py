@@ -5,6 +5,7 @@ import sys
 from .lexer import TetoSyntaxError
 from .runtime import TetoRuntimeError, run
 from .parser import parse
+from .checker import TetoCheckError, check
 
 def main(argv: list[str] | None=None) -> int:
     args=list(sys.argv[1:] if argv is None else argv)
@@ -14,10 +15,10 @@ def main(argv: list[str] | None=None) -> int:
             return 2
         path=Path(args[1])
         try:
-            parse(path.read_text(encoding="utf-8"))
-        except (OSError,TetoSyntaxError) as exc:
+            check(path.read_text(encoding="utf-8"))
+        except (OSError,TetoSyntaxError,TetoCheckError) as exc:
             print(f"TetoScript: {exc}",file=sys.stderr); return 1
-        print(f"Sintaxis válida: {path}")
+        print(f"Análisis correcto: {path}")
         return 0
     cli=argparse.ArgumentParser(prog="teto",description="Intérprete experimental de TetoScript")
     cli.add_argument("archivo", help="archivo fuente .teto")

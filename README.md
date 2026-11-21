@@ -39,7 +39,7 @@ teto examples/hello.teto
 teto check examples/hello.teto
 ```
 
-`check` valida la sintaxis sin ejecutar el programa.
+`check` analiza sintaxis, nombres y tipos básicos sin ejecutar el programa. Por ejemplo, reporta si se usa una variable inexistente o se pasa un texto donde una función requiere un número.
 
 Pruebas:
 
@@ -49,6 +49,6 @@ python -m unittest discover -s tests -v
 
 ## Estado del proyecto
 
-La versión `0.3.0` ya ejecuta variables, anotaciones básicas comprobadas en runtime, funciones, retorno, expresiones aritméticas y lógicas, condicionales, comentarios y salida. Todavía faltan análisis estático real, bucles, módulos, colecciones, herramientas de desarrollo y un compilador. No se declara reemplazo de TypeScript ni lenguaje estable.
+La versión `0.4.0` ya ejecuta variables, anotaciones básicas comprobadas en runtime, funciones, retorno, expresiones aritméticas y lógicas, condicionales, comentarios y salida. `teto check` analiza nombres y tipos antes de ejecutar: detecta identificadores no definidos, incompatibilidades de tipos, argumentos incorrectos y retornos incompatibles. Todavía faltan bucles, módulos, colecciones, análisis de todas las rutas de retorno, herramientas de desarrollo y un compilador. No se declara reemplazo de TypeScript ni lenguaje estable.
 
 Consulta [docs/syntax.md](docs/syntax.md) para la sintaxis implementada. La licencia sigue pendiente: no se asigna una licencia sin decidirla explícitamente.
