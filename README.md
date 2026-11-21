@@ -1,5 +1,7 @@
 # TetoScript
 
+<p align="center"><img src="assets/tetoscript-logo.jpg" alt="Logo de TetoScript: Teto presenta el lenguaje" width="720"></p>
+
 **Un lenguaje propio inspirado en Kasane Teto**, con una sintaxis distintiva y familiar para quienes conocen TypeScript. El repositorio contiene un intérprete experimental escrito en Python; no es TypeScript, no es compatible con su ecosistema y aún no es un reemplazo listo para producción.
 
 ## Ejemplo ejecutable
@@ -34,7 +36,10 @@ Instalación editable y comando `teto`:
 ```sh
 python -m pip install -e .
 teto examples/hello.teto
+teto check examples/hello.teto
 ```
+
+`check` valida la sintaxis sin ejecutar el programa.
 
 Pruebas:
 
@@ -44,6 +49,6 @@ python -m unittest discover -s tests -v
 
 ## Estado del proyecto
 
-La versión `0.2.0` ya ejecuta variables, anotaciones básicas comprobadas en runtime, funciones, retorno, expresiones aritméticas y lógicas, condicionales, comentarios y salida. Todavía faltan análisis estático real, bucles, módulos, colecciones, herramientas de desarrollo y un compilador. No se declara reemplazo de TypeScript ni lenguaje estable.
+La versión `0.3.0` ya ejecuta variables, anotaciones básicas comprobadas en runtime, funciones, retorno, expresiones aritméticas y lógicas, condicionales, comentarios y salida. Todavía faltan análisis estático real, bucles, módulos, colecciones, herramientas de desarrollo y un compilador. No se declara reemplazo de TypeScript ni lenguaje estable.
 
 Consulta [docs/syntax.md](docs/syntax.md) para la sintaxis implementada. La licencia sigue pendiente: no se asigna una licencia sin decidirla explícitamente.

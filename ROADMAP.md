@@ -2,13 +2,15 @@
 
 TetoScript está en fase de diseño y prototipo. La prioridad es convertir el lenguaje en algo consistente y comprobable, no prometer compatibilidad con TypeScript antes de construirla.
 
-## Hecho en 0.2.0
+## Hecho en 0.3.0
 
 - Lexer propio y parser con precedencia de operadores.
 - Intérprete sin `eval` ni ejecución de código Python fuente.
 - Variables, comentarios, `tetolog`, expresiones y condicional `Teto (...) { ... } else { ... }`.
 - Funciones, parámetros tipados, retorno y comprobaciones de tipos básicos en runtime.
 - Pruebas automatizadas y ejemplo ejecutable.
+- Comando `teto check` para validar sintaxis sin ejecutar el archivo.
+- Logo oficial proporcionado por el creador, integrado al README.
 
 ## Próximas etapas
 

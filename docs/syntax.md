@@ -49,3 +49,11 @@ Aritmética `+ - * / %`; comparaciones `== != < <= > >=`; lógicos `and`, `or`, 
 ## Alcance de esta versión
 
 El intérprete ejecuta variables, anotaciones, funciones, `return`, bloques condicionales, llamadas e impresiones. Aún faltan análisis estático, bucles, módulos, arrays/objetos, manejo formal de errores, formato/linter, editor y compilador. La sintaxis y semántica pueden evolucionar antes de una versión estable.
+
+## Validar sin ejecutar
+
+```sh
+teto check programa.teto
+```
+
+El comando analiza si el archivo se puede tokenizar y parsear. No ejecuta sus expresiones y todavía no realiza comprobación estática de tipos ni de nombres.

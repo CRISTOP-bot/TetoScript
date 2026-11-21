@@ -1,6 +1,11 @@
 import unittest
 from tetoscript.lexer import TetoSyntaxError
 from tetoscript.runtime import TetoRuntimeError, run
+from tetoscript.__main__ import main
+from contextlib import redirect_stdout, redirect_stderr
+from io import StringIO
+from pathlib import Path
+import tempfile
 
 class InterpreterTests(unittest.TestCase):
     def test_example_functions_types_modulo_and_branches(self):
@@ -30,5 +35,20 @@ Teto (age % 2 == 1) { tetolog(greet(name)) } else { tetolog("nose") }'''
     def test_non_callable_error(self):
         with self.assertRaisesRegex(TetoRuntimeError,"no se puede llamar"):
             run('teto x = 2 x()')
+    def test_check_command_does_not_execute_program(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/"check.teto"
+            path.write_text('tetolog("this must not print")',encoding="utf-8")
+            out=StringIO()
+            with redirect_stdout(out): self.assertEqual(main(["check",str(path)]),0)
+            self.assertIn("Sintaxis válida",out.getvalue())
+            self.assertNotIn("this must not print",out.getvalue())
+    def test_check_command_rejects_invalid_syntax(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/"broken.teto"
+            path.write_text('Teto (true) {',encoding="utf-8")
+            err=StringIO()
+            with redirect_stderr(err): self.assertEqual(main(["check",str(path)]),1)
+            self.assertIn("TetoScript:",err.getvalue())
 
 if __name__=="__main__": unittest.main()
